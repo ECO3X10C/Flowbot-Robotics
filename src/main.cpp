@@ -166,7 +166,8 @@ void opcontrol() {
   // This is preference to what you like to drive on.
   chassis.set_drive_brake(MOTOR_BRAKE_COAST);
   pros::Motor flywheel(10);
-  pros::ADIDigitalOut pneumatic('A');
+  pros::ADIDigitalOut pneumaticsRight('A');
+  pros::ADIDigitalOut pneumaticsLeft('B');
 
 
 
@@ -191,11 +192,12 @@ void opcontrol() {
 
     // Wings
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)){
-      pneumatic.set_value(true);
+      pneumaticsRight.set_value(true);
+      pneumaticsLeft.set_value(true);
     }
     else {
-      pneumatic.set_value(false);
-      pneumatic.set_value(false);
+      pneumaticsRight.set_value(false);
+      pneumaticsLeft.set_value(false);
     }
     // . . .
 
