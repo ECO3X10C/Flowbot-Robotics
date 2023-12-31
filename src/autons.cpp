@@ -101,6 +101,7 @@ void turn_example() {
 
   chassis.set_turn_pid(0, TURN_SPEED);
   chassis.wait_drive();
+
 }
 
 
@@ -199,6 +200,12 @@ void combining_movements() {
   chassis.wait_drive();
 }
 
+
+void regular() {
+  chassis.set_drive_pid(13, DRIVE_SPEED);
+  chassis.set_drive_pid(-13, DRIVE_SPEED);
+
+}
 
 
 ///

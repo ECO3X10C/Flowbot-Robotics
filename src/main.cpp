@@ -69,13 +69,8 @@ void initialize() {
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.add_autons({
-    Auton("Example Drive\n\nDrive forward and come back.", drive_example),
-    Auton("Example Turn\n\nTurn 3 times.", turn_example),
-    Auton("Drive and Turn\n\nDrive forward, turn, come back. ", drive_and_turn),
-    Auton("Drive and Turn\n\nSlow down during drive.", wait_until_change_speed),
-    Auton("Swing Example\n\nSwing, drive, swing.", swing_example),
-    Auton("Combine all 3 movements", combining_movements),
-    Auton("Interference\n\nAfter driving forward, robot performs differently if interfered or not.", interfered_example),
+    Auton("Regular", regular),
+    Auton("Skills", skills)
   });
 
   // Initialize chassis and auton selector
@@ -106,7 +101,27 @@ void disabled() {
  * starts.
  */
 void competition_initialize() {
-  // . . .
+    pros::delay(500); // Stop the user from doing anything while legacy ports configure.
+
+  // Configure your chassis controls
+  chassis.toggle_modify_curve_with_controller(true); // Enables modifying the controller curve with buttons on the joysticks
+  chassis.set_active_brake(0.1); // Sets the active brake kP. We recommend 0.1.
+  chassis.set_curve_default(0, 0); // Defaults for curve. If using tank, only the first parameter is used. (Comment this line out if you have an SD card!)  
+  default_constants(); // Set the drive to your own constants from autons.cpp!
+
+  // These are already defaulted to these buttons, but you can change the left/right curve buttons here!
+  // chassis.set_left_curve_buttons (pros::E_CONTROLLER_DIGITAL_LEFT, pros::E_CONTROLLER_DIGITAL_RIGHT); // If using tank, only the left side is used. 
+  // chassis.set_right_curve_buttons(pros::E_CONTROLLER_DIGITAL_Y,    pros::E_CONTROLLER_DIGITAL_A);
+
+  // Autonomous Selector using LLEMU
+  ez::as::auton_selector.add_autons({
+    Auton("Regular", regular),
+    Auton("Skills", skills)
+  });
+
+  // Initialize chassis and auton selector
+  chassis.initialize();
+  ez::as::initialize();
 }
 
 
@@ -128,6 +143,7 @@ void autonomous() {
   chassis.reset_drive_sensor(); // Reset drive sensors to 0
   chassis.set_drive_brake(MOTOR_BRAKE_HOLD); // Set motors to hold.  This helps autonomous consistency.
 
+  ez::as::auton_selector.print_selected_auton();
   ez::as::auton_selector.call_selected_auton(); // Calls selected auton from autonomous selector.
 }
 
@@ -150,8 +166,8 @@ void opcontrol() {
   // This is preference to what you like to drive on.
   chassis.set_drive_brake(MOTOR_BRAKE_COAST);
   pros::Motor flywheel(10);
-  pros::ADIDigitalOut pneumatic_left('A');
-  pros::ADIDigitalOut pneumatic_right('B');
+  pros::ADIDigitalOut pneumatic('A');
+
 
 
   while (true) {
@@ -175,12 +191,11 @@ void opcontrol() {
 
     // Wings
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)){
-      pneumatic_left.set_value(true);
-      pneumatic_right.set_value(true);
+      pneumatic.set_value(true);
     }
     else {
-      pneumatic_left.set_value(false);
-      pneumatic_right.set_value(false);
+      pneumatic.set_value(false);
+      pneumatic.set_value(false);
     }
     // . . .
 
