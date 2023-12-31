@@ -208,6 +208,11 @@ void regular() {
 }
 
 
+void skills(){
+  chassis.set_swing_pid(LEFT_SWING,360,TURN_SPEED);
+}
+
+
 ///
 // Interference example
 ///
