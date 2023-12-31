@@ -115,8 +115,8 @@ void competition_initialize() {
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.add_autons({
-    Auton("Regular", regular),
-    Auton("Skills", skills)
+    Auton("Skills", skills),
+    Auton("Regular", regular)
   });
 
   // Initialize chassis and auton selector
