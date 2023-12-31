@@ -203,6 +203,7 @@ void combining_movements() {
 
 void regular() {
   chassis.set_drive_pid(13, DRIVE_SPEED);
+  chassis.wait_drive();
   chassis.set_drive_pid(-13, DRIVE_SPEED);
 
 }
