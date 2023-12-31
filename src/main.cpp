@@ -165,7 +165,7 @@ void autonomous() {
 void opcontrol() {
   // This is preference to what you like to drive on.
   chassis.set_drive_brake(MOTOR_BRAKE_COAST);
-  pros::Motor flywheel(10);
+  pros::Motor flywheel(1);
   pros::ADIDigitalOut pneumaticsRight('A');
   pros::ADIDigitalOut pneumaticsLeft('B');
 
