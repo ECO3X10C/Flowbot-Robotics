@@ -202,15 +202,47 @@ void combining_movements() {
 
 
 void regular() {
-  chassis.set_drive_pid(13, DRIVE_SPEED);
+  chassis.set_drive_pid(25, DRIVE_SPEED);
   chassis.wait_drive();
-  chassis.set_drive_pid(-13, DRIVE_SPEED);
+  chassis.set_drive_pid(-25, DRIVE_SPEED);
 
 }
 
 
 void skills(){
-  chassis.set_swing_pid(LEFT_SWING,360,TURN_SPEED);
+  pros::Motor flywheel(1);
+  pros::ADIDigitalOut pneumatics('A');
+  pros::ADIDigitalOut lift('H');
+
+  lift.set_value(true);
+  flywheel = 127;
+  pros::delay(15000);
+  flywheel = 0;
+  lift.set_value(false);
+  chassis.set_drive_pid(23.61, DRIVE_SPEED, true);
+  chassis.wait_drive();
+  chassis.set_turn_pid(50.45, TURN_SPEED);
+  chassis.wait_drive();
+  chassis.set_drive_pid(37.56, DRIVE_SPEED, true);
+  chassis.wait_drive();
+  chassis.set_turn_pid(-90, TURN_SPEED);
+  chassis.wait_drive();
+  pneumatics.set_value(true);
+  chassis.set_drive_pid(41, 127, true);
+  chassis.wait_drive();
+  chassis.set_drive_pid(45, DRIVE_SPEED, true);
+  chassis.wait_drive();
+  chassis.set_drive_pid(-45, DRIVE_SPEED, true);
+  chassis.wait_drive();
+  chassis.set_turn_pid(90, TURN_SPEED);
+  chassis.set_drive_pid(4, DRIVE_SPEED);
+  chassis.wait_drive();
+  chassis.set_turn_pid(-90, TURN_SPEED);
+  chassis.wait_drive();
+  chassis.set_drive_pid(45, DRIVE_SPEED, true);
+
+
+
 }
 
 
