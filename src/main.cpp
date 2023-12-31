@@ -166,8 +166,8 @@ void opcontrol() {
   // This is preference to what you like to drive on.
   chassis.set_drive_brake(MOTOR_BRAKE_COAST);
   pros::Motor flywheel(1);
-  pros::ADIDigitalOut pneumaticsRight('A');
-  pros::ADIDigitalOut pneumaticsLeft('B');
+  pros::ADIDigitalOut pneumatics('A');
+  pros::ADIDigitalOut lift('H');
 
 
 
@@ -183,7 +183,7 @@ void opcontrol() {
     // Put more user control code here!
 
     // Flywheel 
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
       flywheel = 127;
     }
     else {
@@ -191,14 +191,22 @@ void opcontrol() {
     };
 
     // Wings
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)){
-      pneumaticsRight.set_value(true);
-      pneumaticsLeft.set_value(true);
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
+      pneumatics.set_value(true);
     }
     else {
-      pneumaticsRight.set_value(false);
-      pneumaticsLeft.set_value(false);
+      pneumatics.set_value(false);
+    };
+
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+      lift.set_value(true);
     }
+    else {
+      lift.set_value(false);
+    };
+
+
+
     // . . .
 
     pros::delay(ez::util::DELAY_TIME); // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
