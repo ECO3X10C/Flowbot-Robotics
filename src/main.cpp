@@ -5,14 +5,14 @@
 Drive chassis (
   // Left Chassis Ports (negative port will reverse it!)
   //   the first port is the sensored port (when trackers are not used!)
-  {1, 2}
+  {-16, -17, -18}
 
   // Right Chassis Ports (negative port will reverse it!)
   //   the first port is the sensored port (when trackers are not used!)
-  ,{3, 4}
+  ,{8, 9, 10}
 
   // IMU Port
-  ,20
+  ,21
 
   // Wheel Diameter (Remember, 4" wheels are actually 4.125!)
   //    (or tracking wheel diameter)
@@ -183,12 +183,12 @@ void opcontrol() {
     // Put more user control code here!
 
     // Flywheel 
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)){
-      flywheel = 80;
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+      flywheel = 127;
     }
     else {
       flywheel = 0;
-    }
+    };
 
     // Wings
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)){
