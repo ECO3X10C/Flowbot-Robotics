@@ -5,14 +5,14 @@
 Drive chassis (
   // Left Chassis Ports (negative port will reverse it!)
   //   the first port is the sensored port (when trackers are not used!)
-  {1, 2}
+  {-16, -17, -18}
 
   // Right Chassis Ports (negative port will reverse it!)
   //   the first port is the sensored port (when trackers are not used!)
-  ,{3, 4}
+  ,{8, 9, 10}
 
   // IMU Port
-  ,20
+  ,21
 
   // Wheel Diameter (Remember, 4" wheels are actually 4.125!)
   //    (or tracking wheel diameter)
@@ -149,9 +149,9 @@ void autonomous() {
 void opcontrol() {
   // This is preference to what you like to drive on.
   chassis.set_drive_brake(MOTOR_BRAKE_COAST);
-  pros::Motor flywheel(10);
-  pros::ADIDigitalOut pneumatic_left('A');
-  pros::ADIDigitalOut pneumatic_right('B');
+  pros::Motor flywheel(1);
+  pros::ADIDigitalOut pneumatic('A');
+  pros::ADIDigitalOut lift('H');
 
 
   while (true) {
@@ -166,22 +166,28 @@ void opcontrol() {
     // Put more user control code here!
 
     // Flywheel 
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)){
-      flywheel = 80;
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+      flywheel = 127;
     }
     else {
       flywheel = 0;
-    }
+    };
 
     // Wings
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)){
-      pneumatic_left.set_value(true);
-      pneumatic_right.set_value(true);
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
+      pneumatic.set_value(true);
     }
     else {
-      pneumatic_left.set_value(false);
-      pneumatic_right.set_value(false);
+      pneumatic.set_value(false);
+    };
+
+    // Lift Mech
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
+      lift.set_value(true);
     }
+    else {
+      lift.set_value(false);
+    };
     // . . .
 
     pros::delay(ez::util::DELAY_TIME); // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
