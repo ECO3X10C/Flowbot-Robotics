@@ -183,7 +183,7 @@ void opcontrol() {
 
     // Flywheel 
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
-      flywheel = 127;
+      flywheel = 80;
     }
     else {
       flywheel = 0;
