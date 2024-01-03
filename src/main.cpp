@@ -183,36 +183,56 @@ void opcontrol() {
 
     // Intake 
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
-      intake = 127;
+      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
+        flywheel = -80;
+        intake = 0;
+      }
+      else {
+        flywheel = 0;
+        intake = 127;
+      };
     }
     else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
-      intake = -127;
+      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
+        flywheel = -80;
+        intake = 0;
+      }
+      else {
+        flywheel = 0;
+        intake = -127;
+      };
     }
     else {
       intake = 0;
-    };
-
-    // flywheel
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) and master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
-      flywheel = -80;
-    }
-    else {
       flywheel = 0;
     };
 
-    // Wings
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
-      pneumatics.set_value(true);
-    }
-    else {
-      pneumatics.set_value(false);
-    };
+
 
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
-      lift.set_value(true);
+      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+        pneumatics.set_value(false);
+        lift.set_value(true);
+      }
+      else {
+        lift.set_value(false);
+        pneumatics.set_value(false);
+      };
+    }
+    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
+      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
+        pneumatics.set_value(false);
+        lift.set_value(true);
+      }
+      else {
+        lift.set_value(false);
+        pneumatics.set_value(true);
+
+      };
     }
     else {
       lift.set_value(false);
+      pneumatics.set_value(false);
     };
 
 
