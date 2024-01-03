@@ -215,11 +215,11 @@ void skills(){
   pros::ADIDigitalOut lift('H');
 
   lift.set_value(true);
-  flywheel = 80;
+  flywheel = -80;
   pros::delay(20000);
   flywheel = 0;
   lift.set_value(false);
-    pros::delay(1000);
+  pros::delay(1000);
   chassis.set_drive_pid(23.61, DRIVE_SPEED, true);
   chassis.wait_drive();
   chassis.set_turn_pid(50.45, TURN_SPEED);
@@ -229,7 +229,7 @@ void skills(){
   chassis.set_turn_pid(-90, TURN_SPEED);
   chassis.wait_drive();
   pneumatics.set_value(true);
-  chassis.set_drive_pid(41, 127, true);
+  chassis.set_drive_pid(41, DRIVE_SPEED, true);
   chassis.wait_drive();
   chassis.set_drive_pid(45, DRIVE_SPEED, true);
   chassis.wait_drive();
