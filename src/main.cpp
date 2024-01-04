@@ -167,7 +167,7 @@ void opcontrol() {
   pros::Motor flywheel(1);
   pros::ADIDigitalOut pneumatics('A');
   pros::ADIDigitalOut lift('H');
-  pros::Motor intake(11);
+
 
 
   while (true) {
@@ -181,58 +181,27 @@ void opcontrol() {
     // . . .
     // Put more user control code here!
 
-    // Intake 
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
-      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
-        flywheel = -80;
-        intake = 0;
-      }
-      else {
-        flywheel = 0;
-        intake = 127;
-      };
-    }
-    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
-      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
-        flywheel = -80;
-        intake = 0;
-      }
-      else {
-        flywheel = 0;
-        intake = -127;
-      };
+    // Flywheel 
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
+      flywheel = 80;
     }
     else {
-      intake = 0;
       flywheel = 0;
     };
 
-
-
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
-      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
-        pneumatics.set_value(false);
-        lift.set_value(true);
-      }
-      else {
-        lift.set_value(false);
-        pneumatics.set_value(false);
-      };
+    // Wings
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
+      pneumatics.set_value(true);
     }
-    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
-      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
-        pneumatics.set_value(false);
-        lift.set_value(true);
-      }
-      else {
-        lift.set_value(false);
-        pneumatics.set_value(true);
+    else {
+      pneumatics.set_value(false);
+    };
 
-      };
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+      lift.set_value(true);
     }
     else {
       lift.set_value(false);
-      pneumatics.set_value(false);
     };
 
 
