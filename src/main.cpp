@@ -1,6 +1,9 @@
 #include "main.h"
 
 
+
+
+
 // Chassis constructor
 Drive chassis (
   // Left Chassis Ports (negative port will reverse it!)
@@ -30,15 +33,44 @@ Drive chassis (
 );
 
 
+///
+//Control Functions
+///
 
-/**
- * Runs initialization code. This occurs as soon as the program is started.
- *
- * All other competition modes are blocked by initialize; it is recommended
- * to keep execution time for this mode under a few seconds.
- */
+
+//These functions are mainly here for future use, these can be exported to the auton file and used to make the auton code simpler.
+
+//Having functions take in bools are made here so its eaiser to make toggles and change constant values, eg. Flywheel speed
+
+//Flywheel bool function
+void flywheelControl(bool value){
+    pros::Motor flywheel(1);
+    if(value == true){
+      flywheel = -117;
+    }else{
+      flywheel = 0;}}
+
+//Wings bool function
+void wingsControl(bool value){
+   pros::ADIDigitalOut wings('A');
+   wings.set_value(value);}
+
+//Lift bool function
+void liftControl(bool value){
+  pros::ADIDigitalOut lift('H');
+  lift.set_value(value);}
+
+//Drive bool function
+void driveControl(bool value){
+  if(value == false){
+    chassis.arcade_standard(ez::SPLIT);
+  }else{
+    chassis.tank();}}
+
+
+ //Runs initialization code. This occurs as soon as the program is started.
 void initialize() {
-  
+
   pros::delay(500); // Stop the user from doing anything while legacy ports configure.
 
   // Configure your chassis controls
@@ -59,27 +91,13 @@ void initialize() {
 }
 
 
-
-/**
- * Runs while the robot is in the disabled state of Field Management System or
- * the VEX Competition Switch, following either autonomous or opcontrol. When
- * the robot is enabled, this task will exit.
- */
+//No idea what one would need this for but its here 
 void disabled() {
   // . . .
 }
 
 
-
-/**
- * Runs after initialize(), and before autonomous when connected to the Field
- * Management System or the VEX Competition Switch. This is intended for
- * competition-specific initialization routines, such as an autonomous selector
- * on the LCD.
- *
- * This task will exit when the robot is enabled and autonomous or opcontrol
- * starts.
- */
+//Same as initizalize but for competetions
 void competition_initialize() {
     pros::delay(500); // Stop the user from doing anything while legacy ports configure.
 
@@ -92,16 +110,13 @@ void competition_initialize() {
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.add_autons({
+    Auton("Regular", regular),
     Auton("Skills", skills)
   });
-
   // Initialize chassis and auton selector
   chassis.initialize();
   ez::as::initialize();
 }
-
-
-
 
 
 void autonomous() {
@@ -115,53 +130,54 @@ void autonomous() {
 }
 
 
-
-
 void opcontrol() {
   // This is preference to what you like to drive on.
   chassis.set_drive_brake(MOTOR_BRAKE_COAST);
-  pros::Motor flywheel(1);
-  pros::ADIDigitalOut pneumatics('A');
-  pros::ADIDigitalOut lift('H');
+
+
+  //These are toggle variables, toggling would make it easier for the driver to control the various componenets of the robot more efficenitly.
+  static bool toggleFlywheel = {false};
+  static bool toggleWings = {false};
+  static bool toggleLift = {false};
+  static bool toggleDrive = {false};
+
+  while (true) { //Forever loop that checks looks for chnages in the controller state and translates those changes to motor or soleniod activations on the robot
+
+    driveControl(toggleDrive); //Having Split drive as the default drive mode
 
 
 
-  while (true) {
+    /*The following if statements have toggle logic. How this logic works is: The toggleComponent variable stores the current value, then once the controller button is pressed, 
+    it checks what the previous value was and changes the current value to the opposite of the previous value was. Then stores the new value into the toggleComponent variable*/
 
-    //chassis.tank(); // Tank control
-    chassis.arcade_standard(ez::SPLIT); // Standard split arcade
-    // chassis.arcade_standard(ez::SINGLE); // Standard single arcade
-    // chassis.arcade_flipped(ez::SPLIT); // Flipped split arcade
-    // chassis.arcade_flipped(ez::SINGLE); // Flipped single arcade
+    //Drive Mode Selection
+    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)){ //Having toggle drive modes would mean that it would be eaiser to change between our drivers if they have different drive preferences
+      driveControl(!toggleDrive);    
+      toggleDrive = !toggleDrive;}
 
-
+  
     // Flywheel 
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
-      flywheel = -117;
-    }
-    else {
-      flywheel = 0;
-    };
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)){  // This would make match loading eaiser as the mistake of accidently turning off the flywheel would not happen
+    flywheelControl(!toggleFlywheel);    
+    toggleFlywheel = !toggleFlywheel;}
 
     // Wings
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
-      pneumatics.set_value(true);
-    }
-    else {
-      pneumatics.set_value(false);
-    };
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){ // Togglable wings help pushing the maximum number of balls into the net, this would avoid the mistake of accidently lowering the wings while pushing balls into the net
+     wingsControl(!toggleWings);
+     toggleWings = !toggleWings;}
 
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
-      lift.set_value(true);
-    }
-    else {
-      lift.set_value(false);
-    };
-
-
-
-    // . . .
+    //Lift
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){ // This would make match loading eaiser as the mistake of accidently lowering the lift would not happen
+     liftControl(!toggleLift);
+     toggleLift = !toggleLift;};
 
     pros::delay(ez::util::DELAY_TIME); // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
   }
+
+
 }
+
+
+
+
+

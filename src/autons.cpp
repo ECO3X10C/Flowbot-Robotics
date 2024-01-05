@@ -1,6 +1,8 @@
 #include "main.h"
 
 
+
+//The speeds the robot is moving when driving, turning and swinging. These were figured out from experimental testing
 const int DRIVE_SPEED = 80; 
 const int TURN_SPEED  = 50;
 const int SWING_SPEED = 50;
@@ -10,6 +12,8 @@ const int SWING_SPEED = 50;
 ///
 // Constants
 ///
+
+//PID Constant, these are still untuned, something that needs to change after the first league meeting on Jan 6 2024
 
 void default_constants() {
   chassis.set_slew_min_power(80, 80);
@@ -57,24 +61,28 @@ void modified_exit_condition() {
 //Auton Functions
 ///
 
-
+//All this fucntion does it go forward put the preload into the net and then move back. This is a way to ensure we have a chance of winning auton in a regular match
 void regular() {
-  chassis.set_drive_pid(25, DRIVE_SPEED);
-  chassis.wait_drive();
-  chassis.set_drive_pid(-25, DRIVE_SPEED);
+  chassis.set_drive_pid(25, DRIVE_SPEED);  //Go forward 25 inches
+  chassis.wait_drive(); //Wait for the previous instruction to complete
+  chassis.set_drive_pid(-25, DRIVE_SPEED); //Go back 25 inches
 
 }
 
+// The lift and flywheel go up for the 1 min skils auton period, in that time matching loading happens
+
 
 void skills(){
-  pros::Motor flywheel(1);
-  pros::ADIDigitalOut lift('H');
 
-  lift.set_value(true);
-  flywheel = 117;
-  pros::delay(56000);
-  flywheel = 0;
-  pros::delay(4000);
+  //In the future this would be replaced by the control functions in main.cpp as that would signifianctly make it more reliable as it is more central. Also after the first league meet and once the PID values are tuned properly we can make the bot move and push balls into net
+  pros::Motor flywheel(1);  //Set flywheel port
+  pros::ADIDigitalOut lift('H'); //Set lift digital port
+
+  lift.set_value(true); // raise lift
+  flywheel = 117; //set flywheel to ~92%, because when tested on the field this is the most efficent speed to get all the triballs over to the other side
+  pros::delay(56000); //56 seconds of flywheel spinning
+  flywheel = 0; //Stop flywheel
+  pros::delay(4000); //4 seconds of flywheel braking time
 
 
 
