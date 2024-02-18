@@ -62,29 +62,64 @@ void modified_exit_condition() {
 ///
 
 //All this fucntion does it go forward put the preload into the net and then move back. This is a way to ensure we have a chance of winning auton in a regular match
-void regular() {
-  chassis.set_drive_pid(25, DRIVE_SPEED);  //Go forward 25 inches
+void normal() {
+  pros::Motor intake(17);
+  pros::ADIDigitalOut wings('A');
+  chassis.set_drive_pid(52,127);  //Go forward 25 inches
   chassis.wait_drive(); //Wait for the previous instruction to complete
-  chassis.set_drive_pid(-25, DRIVE_SPEED); //Go back 25 inches
+  chassis.set_turn_pid(-90, TURN_SPEED);  //Go forward 25 inches
+  chassis.wait_drive(); //Wait for the previous instruction to complete
+  intake = -127;
+  pros::delay(1000);
+  chassis.set_drive_pid(10,80);  //Go forward 25 inches
+  chassis.wait_drive();
+  chassis.set_drive_pid(-10,80);  //Go forward 25 inches
+  chassis.wait_drive();
+  chassis.set_turn_pid(90, TURN_SPEED);
+  chassis.wait_drive();
+  chassis.set_drive_pid(-4,127);  //Go forward 25 inches
+  chassis.wait_drive();
+  wings.set_value(true);
+  pros::delay(1000);
+  chassis.set_drive_pid(32,127);  //Go forward 25 inches
+  chassis.wait_drive();
+  chassis.set_drive_pid(-15,127);  //Go forward 25 inches
+  chassis.wait_drive();
+  chassis.set_drive_pid(15,127);  //Go forward 25 inches
+  chassis.wait_drive();
+  chassis.set_drive_pid(-15,127);  //Go forward 25 inches
+  chassis.wait_drive();
+  wings.set_value(false);
+
+}
+
+void winpoint(){
+  pros::ADIDigitalOut wings('A');
+  chassis.set_drive_pid(-20,50);
+  chassis.wait_drive();
+    pros::delay(1000);
+  wings.set_value(true);
+  pros::delay(1000);
+  chassis.set_drive_pid(20,127,true);
+  chassis.wait_drive();
+  wings.set_value(false);
+  chassis.set_turn_pid(-20,80);
+  chassis.wait_drive();
+    chassis.set_drive_pid(25.75,70,true);
+  chassis.wait_drive();
 
 }
 
 // The lift and flywheel go up for the 1 min skils auton period, in that time matching loading happens
 
-
 void skills(){
 
-  //In the future this would be replaced by the control functions in main.cpp as that would signifianctly make it more reliable as it is more central. Also after the first league meet and once the PID values are tuned properly we can make the bot move and push balls into net
-  pros::Motor flywheel(1);  //Set flywheel port
-  pros::ADIDigitalOut lift('H'); //Set lift digital port
-
-  lift.set_value(true); // raise lift
-  flywheel = 117; //set flywheel to ~92%, because when tested on the field this is the most efficent speed to get all the triballs over to the other side
-  pros::delay(56000); //56 seconds of flywheel spinning
-  flywheel = 0; //Stop flywheel
-  pros::delay(4000); //4 seconds of flywheel braking time
-
-
-
+  /*In the future this would be replaced by the control functions in main.cpp as that would signifianctly make it more reliable as it is more central. 
+  Also after the first league meet and once the PID values are tuned properly we can make the bot move and push balls into net*/
+  pros::Motor flywheel(14);  //Set flywheel port
+  flywheel = -127;
+  pros::delay(50000); //set flywheel to ~92%, because when tested on the field this is the most efficent speed to get all the triballs over to the other side
+  flywheel=0;
+  chassis.set_drive_pid(-70,127,true);
 }
 

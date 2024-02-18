@@ -5,8 +5,8 @@
 extern Drive chassis;
 
 void skills();
-void regular();
-
+void normal();
+void winpoint();
 void default_constants();
 void one_mogo_constants();
 void two_mogo_constants();

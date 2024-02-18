@@ -1,21 +1,17 @@
 #include "main.h"
 
-
-
-
-
 // Chassis constructor
 Drive chassis (
   // Left Chassis Ports (negative port will reverse it!)
   //   the first port is the sensored port (when trackers are not used!)
-  {-16, -17, -18}
+  {-9, 10, -20}
 
   // Right Chassis Ports (negative port will reverse it!)
   //   the first port is the sensored port (when trackers are not used!)
-  ,{8, 9, 10}
+  ,{-1, 2, 12}
 
   // IMU Port
-  ,21
+  ,3
 
   // Wheel Diameter (Remember, 4" wheels are actually 4.125!)
   //    (or tracking wheel diameter)
@@ -43,29 +39,43 @@ Drive chassis (
 //Having functions take in bools are made here so its eaiser to make toggles and change constant values, eg. Flywheel speed
 
 //Flywheel bool function
-void flywheelControl(bool value){
-    pros::Motor flywheel(1);
+void flywheelControlFront(bool value){
+    pros::Motor flywheel(14);
     if(value == true){
-      flywheel = -117;
+      flywheel = 127;
     }else{
       flywheel = 0;}}
+
+void flywheelControlBack(bool value){
+    pros::Motor flywheel(14);
+    if(value == true){
+      flywheel = -127;
+    }else{
+      flywheel = 0;}}
+
 
 //Wings bool function
 void wingsControl(bool value){
    pros::ADIDigitalOut wings('A');
    wings.set_value(value);}
 
-//Lift bool function
-void liftControl(bool value){
-  pros::ADIDigitalOut lift('H');
-  lift.set_value(value);}
 
 //Drive bool function
 void driveControl(bool value){
-  if(value == false){
-    chassis.arcade_standard(ez::SPLIT);
-  }else{
-    chassis.tank();}}
+      chassis.arcade_standard(ez::SPLIT);
+}
+
+//Lift control
+void hangControl(bool value){
+    pros::Motor hang(6);
+if(value == false){
+  hang = 75;
+}
+else{
+  hang = -75;
+};
+   }
+
 
 
  //Runs initialization code. This occurs as soon as the program is started.
@@ -74,14 +84,14 @@ void initialize() {
   pros::delay(500); // Stop the user from doing anything while legacy ports configure.
 
   // Configure your chassis controls
-  chassis.toggle_modify_curve_with_controller(true); // Enables modifying the controller curve with buttons on the joysticks
-  chassis.set_active_brake(0.1); // Sets the active brake kP. We recommend 0.1.
-  chassis.set_curve_default(0, 0); // Defaults for curve. If using tank, only the first parameter is used. (Comment this line out if you have an SD card!)  
+    chassis.set_curve_default(7, 7); // Set curve
+  chassis.set_active_brake(0.1); // Sets the active brake kP. We recommend 0.1.; // Defaults for curve. If using tank, only the first parameter is used. (Comment this line out if you have an SD card!)  
   default_constants(); // Set the drive to your own constants from autons.cpp!
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.add_autons({
-    Auton("Regular", regular),
+    Auton("Win Point", winpoint),
+    Auton("Regular", normal),
     Auton("Skills", skills)
   });
 
@@ -102,16 +112,17 @@ void competition_initialize() {
     pros::delay(500); // Stop the user from doing anything while legacy ports configure.
 
   // Configure your chassis controls
-  chassis.toggle_modify_curve_with_controller(true); // Enables modifying the controller curve with buttons on the joysticks
+  chassis.set_curve_default(7, 7); // Set curve
   chassis.set_active_brake(0.1); // Sets the active brake kP. We recommend 0.1.
-  chassis.set_curve_default(0, 0); // Defaults for curve. If using tank, only the first parameter is used. (Comment this line out if you have an SD card!)  
   default_constants(); // Set the drive to your own constants from autons.cpp!
 
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.add_autons({
-    Auton("Regular", regular),
-    Auton("Skills", skills)
+      Auton("Win Point", winpoint),
+      Auton("Regular", normal),
+     Auton("Skills", skills),
+
   });
   // Initialize chassis and auton selector
   chassis.initialize();
@@ -133,46 +144,68 @@ void autonomous() {
 void opcontrol() {
   // This is preference to what you like to drive on.
   chassis.set_drive_brake(MOTOR_BRAKE_COAST);
+  pros::Motor intake(17);
 
+  
 
   //These are toggle variables, toggling would make it easier for the driver to control the various componenets of the robot more efficenitly.
-  static bool toggleFlywheel = {false};
+  static bool toggleFlywheelFront = {false};
+  static bool toggleFlywheelBack = {false};
   static bool toggleWings = {false};
-  static bool toggleLift = {false};
   static bool toggleDrive = {false};
+  static bool toggleHang = {false};
 
   while (true) { //Forever loop that checks looks for chnages in the controller state and translates those changes to motor or soleniod activations on the robot
 
     driveControl(toggleDrive); //Having Split drive as the default drive mode
 
 
-
     /*The following if statements have toggle logic. How this logic works is: The toggleComponent variable stores the current value, then once the controller button is pressed, 
     it checks what the previous value was and changes the current value to the opposite of the previous value was. Then stores the new value into the toggleComponent variable*/
 
     //Drive Mode Selection
-    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)){ //Having toggle drive modes would mean that it would be eaiser to change between our drivers if they have different drive preferences
+    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)){ //Having toggle drive modes would mean that it would be eaiser to change between our drivers if they have different drive preferences
       driveControl(!toggleDrive);    
       toggleDrive = !toggleDrive;}
 
-  
-    // Flywheel 
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)){  // This would make match loading eaiser as the mistake of accidently turning off the flywheel would not happen
-    flywheelControl(!toggleFlywheel);    
-    toggleFlywheel = !toggleFlywheel;}
+    // Flywheel
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)){  // This would make match loading eaiser as the mistake of accidently turning off the flywheel would not happen
+    flywheelControlFront(!toggleFlywheelFront);    
+    toggleFlywheelFront = !toggleFlywheelFront;}
+
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)){  // This would make match loading eaiser as the mistake of accidently turning off the flywheel would not happen
+    flywheelControlBack(!toggleFlywheelBack);    
+    toggleFlywheelBack = !toggleFlywheelBack;}
 
     // Wings
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){ // Togglable wings help pushing the maximum number of balls into the net, this would avoid the mistake of accidently lowering the wings while pushing balls into the net
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)){ // Togglable wings help pushing the maximum number of balls into the net, this would avoid the mistake of accidently lowering the wings while pushing balls into the net
      wingsControl(!toggleWings);
      toggleWings = !toggleWings;}
+    
 
-    //Lift
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){ // This would make match loading eaiser as the mistake of accidently lowering the lift would not happen
-     liftControl(!toggleLift);
-     toggleLift = !toggleLift;};
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)){ // Togglable wings help pushing the maximum number of balls into the net, this would avoid the mistake of accidently lowering the wings while pushing balls into the net
+     hangControl(!toggleHang);
+     toggleHang = !toggleHang;}
+
+
+//Intake
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
+      intake = 127;
+    }
+    /**/
+    else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+      intake = -127;
+    }
+  else {
+      intake = 0;
+    };
 
     pros::delay(ez::util::DELAY_TIME); // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
   }
+
+
+
+  
 
 
 }
