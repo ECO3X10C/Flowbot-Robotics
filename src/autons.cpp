@@ -63,50 +63,91 @@ void modified_exit_condition() {
 
 //All this fucntion does it go forward put the preload into the net and then move back. This is a way to ensure we have a chance of winning auton in a regular match
 void normal() {
-  pros::Motor intake(17);
+  /*
   pros::ADIDigitalOut wings('A');
-  chassis.set_drive_pid(52,127);  //Go forward 25 inches
-  chassis.wait_drive(); //Wait for the previous instruction to complete
-  chassis.set_turn_pid(-90, TURN_SPEED);  //Go forward 25 inches
-  chassis.wait_drive(); //Wait for the previous instruction to complete
+  pros::Motor intake(17);
   intake = -127;
-  pros::delay(1000);
-  chassis.set_drive_pid(10,80);  //Go forward 25 inches
-  chassis.wait_drive();
-  chassis.set_drive_pid(-10,80);  //Go forward 25 inches
-  chassis.wait_drive();
-  chassis.set_turn_pid(90, TURN_SPEED);
-  chassis.wait_drive();
-  chassis.set_drive_pid(-4,127);  //Go forward 25 inches
-  chassis.wait_drive();
+  pros::delay(700);
   wings.set_value(true);
-  pros::delay(1000);
-  chassis.set_drive_pid(32,127);  //Go forward 25 inches
+  chassis.set_drive_pid();
   chassis.wait_drive();
-  chassis.set_drive_pid(-15,127);  //Go forward 25 inches
+  chassis.set_turn_pid();
   chassis.wait_drive();
-  chassis.set_drive_pid(15,127);  //Go forward 25 inches
+  chassis.set_drive_pid();
   chassis.wait_drive();
-  chassis.set_drive_pid(-15,127);  //Go forward 25 inches
+  intake = 127;
+  pros::delay(700);
+  chassis.set_drive_pid();
   chassis.wait_drive();
   wings.set_value(false);
-
+  chassis.set_turn_pid();
+  chassis.wait_drive();
+  chassis.set_drive_pid();
+  chassis.wait_drive();
+  intake = -127;
+  pros::delay(700);
+  chassis.set_turn_pid();
+  chassis.wait_drive();
+  intake = 127;
+  pros::delay(700);
+  chassis.set_turn_pid();
+  chassis.wait_drive();
+  chassis.set_drive_pid();
+  chassis.wait_drive();
+  intake = 127;
+  pros::delay(700);
+  chassis.set_turn_pid();
+  chassis.wait_drive();
+  wings.set_value(true);
+  chassis.set_drive_pid();
+  chassis.wait_drive();
+  chassis.set_drive_pid(); //Backwards
+  chassis.wait_drive();
+  chassis.set_drive_pid();
+  chassis.wait_drive();
+  chassis.set_drive_pid(); //Backwards
+  chassis.wait_drive();
+  */
 }
 
 void winpoint(){
+  /*
   pros::ADIDigitalOut wings('A');
-  chassis.set_drive_pid(-20,50);
-  chassis.wait_drive();
-    pros::delay(1000);
+  pros::Motor intake(17);
   wings.set_value(true);
-  pros::delay(1000);
-  chassis.set_drive_pid(20,127,true);
+  chassis.set_drive_pid();
+  chassis.wait_drive();
+  chassis.set_turn_pid();
+  chassis.wait_drive();
+  chassis.set_drive_pid();
+  chassis.wait_drive();
+  chassis.set_turn_pid();
   chassis.wait_drive();
   wings.set_value(false);
-  chassis.set_turn_pid(-20,80);
+  chassis.set_drive_pid();
   chassis.wait_drive();
-    chassis.set_drive_pid(25.75,70,true);
+  chassis.set_turn_pid();
   chassis.wait_drive();
+  chassis.set_drive_pid();
+  chassis.wait_drive();
+  intake = 127;
+  chassis.set_drive_pid();
+  chassis.wait_drive();
+  wings.set_value(true);
+  chassis.set_drive_pid();
+  chassis.wait_drive();
+  chassis.set_turn_pid();
+  chassis.wait_drive();
+  wings.set_value(true);
+  chassis.set_drive_pid();
+  chassis.wait_drive();
+  chassis.set_turn_pid();
+  chassis.wait_drive();
+  chassis.set_drive_pid();
+  chassis.wait_drive();
+*/
+
+
 
 }
 

@@ -53,29 +53,12 @@ void flywheelControlBack(bool value){
     }else{
       flywheel = 0;}}
 
-
-//Wings bool function
-void wingsControl(bool value){
-   pros::ADIDigitalOut wings('A');
-   wings.set_value(value);}
-
-
-//Drive bool function
-void driveControl(bool value){
-      chassis.arcade_standard(ez::SPLIT);
-}
-
-//Lift control
 void hangControl(bool value){
-    pros::Motor hang(6);
-if(value == false){
-  hang = 75;
-}
-else{
-  hang = -75;
-};
-   }
-
+    pros::ADIDigitalOut hang('B');
+    if(value == true){
+      hang.set_value(true);
+    }else{
+      hang.set_value(false);}}
 
 
  //Runs initialization code. This occurs as soon as the program is started.
@@ -145,28 +128,24 @@ void opcontrol() {
   // This is preference to what you like to drive on.
   chassis.set_drive_brake(MOTOR_BRAKE_COAST);
   pros::Motor intake(17);
+  pros::ADIDigitalOut wings('A');
 
   
 
   //These are toggle variables, toggling would make it easier for the driver to control the various componenets of the robot more efficenitly.
   static bool toggleFlywheelFront = {false};
   static bool toggleFlywheelBack = {false};
-  static bool toggleWings = {false};
-  static bool toggleDrive = {false};
   static bool toggleHang = {false};
 
   while (true) { //Forever loop that checks looks for chnages in the controller state and translates those changes to motor or soleniod activations on the robot
 
-    driveControl(toggleDrive); //Having Split drive as the default drive mode
+    chassis.arcade_standard(ez::SPLIT); //Having Split drive as the default drive mode
 
 
     /*The following if statements have toggle logic. How this logic works is: The toggleComponent variable stores the current value, then once the controller button is pressed, 
     it checks what the previous value was and changes the current value to the opposite of the previous value was. Then stores the new value into the toggleComponent variable*/
 
-    //Drive Mode Selection
-    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)){ //Having toggle drive modes would mean that it would be eaiser to change between our drivers if they have different drive preferences
-      driveControl(!toggleDrive);    
-      toggleDrive = !toggleDrive;}
+
 
     // Flywheel
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)){  // This would make match loading eaiser as the mistake of accidently turning off the flywheel would not happen
@@ -177,16 +156,19 @@ void opcontrol() {
     flywheelControlBack(!toggleFlywheelBack);    
     toggleFlywheelBack = !toggleFlywheelBack;}
 
-    // Wings
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)){ // Togglable wings help pushing the maximum number of balls into the net, this would avoid the mistake of accidently lowering the wings while pushing balls into the net
-     wingsControl(!toggleWings);
-     toggleWings = !toggleWings;}
-    
+//Hang
 
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)){ // Togglable wings help pushing the maximum number of balls into the net, this would avoid the mistake of accidently lowering the wings while pushing balls into the net
-     hangControl(!toggleHang);
-     toggleHang = !toggleHang;}
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)&&master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)){  // This would make match loading eaiser as the mistake of accidently turning off the flywheel would not happen
+    hangControl(!toggleHang);    
+    toggleHang = !toggleHang;}
 
+
+//Wings 
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
+      wings.set_value(true);
+    }else{
+      wings.set_value(false);
+    }
 
 //Intake
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
